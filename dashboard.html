@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Produzione</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef2f7;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    a {
+        display: inline-block;
+        margin-bottom: 15px;
+        text-decoration: none;
+        color: #1e7dff;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th {
+        background: #1e7dff;
+        color: white;
+        padding: 12px;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
+
+    tr:hover {
+        background: #f1f5fb;
+    }
+
+    /* Legend styling */
+    .legend {
+        margin-bottom: 10px;
+    }
+
+    .legend span {
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-right: 5px;
+        font-size: 14px;
+    }
+
+    .ok {
+        background: #d4edda;
+    }
+
+    .late {
+        background: #f8d7da;
+    }
+
+    .missing {
+        background: #fff3cd;
+    }
+
+    .delete-btn {
+        background: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+</style>
+
+<body>
+    <div class="container">
+
+        <a href="index.html">⬅ Torna alla calcolatrice</a>
+
+        <h2>Dashboard Produzione</h2>
+
+        <div class="legend">
+            <span class="ok">OK</span>
+            <span class="late">In Ritardo</span>
+            <span class="missing">Serbatoio Mancante</span>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Pressa</th>
+                    <th>Serbatoio</th>
+                    <th>Pezzi</th>
+                    <th>Tempo Per Svuotare</th>
+                    <th>Stop Materiale</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody id="tabellaMacchine"></tbody>
+        </table>
+
+        <h3>📊 Control Panel</h3>
+        <div id="cardsContainer"
+            style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;"></div>
+
+    </div>
+
+    <script>
+        function loadDashboard() {
+            let lista = JSON.parse(localStorage.getItem("produzione")) || [];
+            let tabella = document.getElementById("tabellaMacchine");
+
+            tabella.innerHTML = "";
+
+            lista.forEach(item => {
+
+                let bgColor = "";
+
+                if ((item.stato || "").includes("❌")) {
+                    bgColor = "#f8d7da"; // red only for late
+                }
+
+                // simulate live countdown (approx)
+                let stopTime = item.stop;
+
+                let siloBadge = "";
+
+                if (!item.serbatoio || item.serbatoio === "-") {
+                    siloBadge = `
+                        <span style="
+                            background:#facc15;
+                            color:#111;
+                            padding:3px 8px;
+                            border-radius:6px;
+                            font-size:12px;
+                            margin-left:6px;
+                            font-weight:bold;
+                        ">
+                            ⚠ NO SERB.
+                        </span>
+                    `;
+                }
+
+                let row = `
+                    <tr style="background-color:${bgColor}">
+                        <td>${item.macchina}</td>
+                        <td>
+                            ${item.serbatoio || "-"}
+                            ${siloBadge}
+                        </td>
+                        <td>${item.pezzi}</td>
+                        <td>${item.tempo}</td>
+                        <td>${item.stop}</td>
+                        <td>
+                            <button class="delete-btn" onclick="elimina('${item.macchina}')">🗑️</button>
+                        </td>
+                    </tr>
+                    `;
+                tabella.innerHTML += row;
+            });
+            renderCards(lista);
+        }
+
+        function updateCountdowns() {
+            let rows = document.querySelectorAll(".countdown");
+
+            let now = new Date();
+
+            rows.forEach(el => {
+                let stop = el.getAttribute("data-stop");
+
+                if (!stop) return;
+
+                let [h, m] = stop.split(":");
+                let stopTime = new Date();
+                stopTime.setHours(h, m, 0, 0);
+
+                let diff = Math.floor((stopTime - now) / 1000);
+
+                if (diff < 0) {
+                    el.innerText = "❌ LATE";
+                    el.style.color = "red";
+                } else {
+                    let min = Math.floor(diff / 60);
+                    let sec = diff % 60;
+                    el.innerText = `${min}m ${sec}s`;
+                }
+            });
+        }
+
+        let alarmPlayed = false;
+
+        function checkAlarm() {
+            let lista = JSON.parse(localStorage.getItem("produzione")) || [];
+
+            let hasLate = lista.some(item => (item.stato || "").includes("❌"));
+
+            if (hasLate && !alarmPlayed) {
+                let audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+                audio.play();
+                alarmPlayed = true;
+            }
+        }
+
+        function elimina(macchina) {
+            let lista = JSON.parse(localStorage.getItem("produzione")) || [];
+
+            // remove selected machine
+            lista = lista.filter(item => item.macchina !== macchina);
+
+            // save updated list
+            localStorage.setItem("produzione", JSON.stringify(lista));
+
+            // reload table instantly
+            loadDashboard();
+        }
+
+        function startDashboard() {
+            loadDashboard();
+            updateCountdowns();
+        }
+
+        function renderCards(lista) {
+            let container = document.getElementById("cardsContainer");
+            container.innerHTML = "";
+
+            lista.forEach(item => {
+
+                let color = "#d4edda"; // green default
+                let statusText = "OK";
+
+                if (!item.serbatoio || item.serbatoio === "-") {
+                    color = "#fff3cd";
+                    statusText = "NO SILO";
+                } else if ((item.stato || "").includes("❌")) {
+                    color = "#f8d7da";
+                    statusText = "LATE";
+                }
+
+                let card = `
+            <div style="
+                background:${color};
+                padding:15px;
+                border-radius:12px;
+                text-align:center;
+                font-weight:bold;
+                box-shadow:0 3px 10px rgba(0,0,0,0.1);
+            ">
+                <div style="font-size:16px;">${item.macchina}</div>
+                <div style="margin-top:8px;">${statusText}</div>
+                <div style="font-size:12px; margin-top:5px;">
+                    ${item.pezzi} pcs
+                </div>
+            </div>
+        `;
+                container.innerHTML += card;
+            });
+        }
+
+        // initial load
+        startDashboard();
+
+        // refresh table when data changes
+        setInterval(() => {
+            loadDashboard();
+        }, 2000);
+
+        // alarm
+        setInterval(checkAlarm, 5000);
+    </script>
+</body>

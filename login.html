@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f6f9;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <h2>Login</h2>
+
+        <input type="text" id="user" placeholder="Username">
+        <input type="password" id="pass" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="error" style="color:red;"></p>
+    </div>
+
+    <script>
+        // 🔐 hardcoded users (you can change)
+        const users = {
+            admin: "1234",
+            user: "0000",
+            salvatore:"salvatore"
+        };
+
+        function login() {
+            let u = document.getElementById("user").value;
+            let p = document.getElementById("pass").value;
+
+            if (users[u] && users[u] === p) {
+                localStorage.setItem("loggedIn", "true");
+                localStorage.setItem("username", u);
+
+                window.location.href = "index.html";
+            } else {
+                document.getElementById("error").innerText = "Wrong credentials";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
