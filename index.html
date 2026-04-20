@@ -134,6 +134,19 @@
                 flex: 1;
             }
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -210,7 +223,7 @@
     <div class="container">
 
         <label>Codice Materiale</label>
-        <input type="text" id="materiale" placeholder="Codice o densità (es. VX15 o 0.050)" oninput="searchMateriale()">
+        <input type="text" id="materiale" placeholder="Codice o densità (es. VX15 o 50)" oninput="searchMateriale()">
 
         <!-- hidden input for calculations -->
         <input type="hidden" id="densita">
@@ -409,9 +422,9 @@
             deadline.setHours(orario.ore, orario.minuti, 0, 0);
 
             // fix: next day
-            if (deadline < now) {
-                deadline.setDate(deadline.getDate() + 1);
-            }
+            //if (deadline < now) {
+                //deadline.setDate(deadline.getDate() + 1);
+            //}
 
             let tempoDisponibile = (deadline - now) / 1000;
 
@@ -637,7 +650,12 @@
             } else {
                 this.value = v;
             }
-        });    
+        });
+
+        function logout() {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+        }
     </script>
 
 </body>
