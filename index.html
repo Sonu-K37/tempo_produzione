@@ -141,8 +141,8 @@
     <button class="top-btn" onclick="vaiDashboard()">📊 Dashboard</button>
 
     <button onclick="logout()" style="background:rgb(0, 183, 255); color:white;">
-    Logout
-</button>
+        Logout
+    </button>
 
     <script>
         function vaiDashboard() {
@@ -244,6 +244,8 @@
         </div>
         <div id="materialInfo"></div>
 
+        <label>Orario Fine Produzione</label>
+        <input type="text" id="fineOrario" value="21:00" placeholder="HH:MM (es. 18:30)" maxlength="5">
 
 
         <button onclick="calcola()">CALCOLA</button>
@@ -260,7 +262,9 @@
             <p>Tempo Per Svuotare: <span id="tempo"></span></p>
         </div>
 
-        <h3>Controllo Tempo (Fine entro 21:00)</h3>
+
+
+        <h3>Controllo Tempo</h3>
         <div class="result">
             <p>Tempo Disponibile: <span id="tempoDisponibile"></span></p>
             <p>Stato: <span id="stato"></span></p>
@@ -269,8 +273,8 @@
     </div>
     <script>
         if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-}
+            window.location.href = "login.html";
+        }
         const macchineData = {
             "MK 18": { linea: 500, tramoggia: 120 },
             "MK 16": { linea: 460, tramoggia: 120 },
@@ -397,14 +401,23 @@
 
             // ⏱️ TEMPO LIMITE
             let now = new Date();
+
+            let orario = getOrarioFine();
+            if (!orario) return;
+
             let deadline = new Date();
-            deadline.setHours(21, 0, 0, 0);
+            deadline.setHours(orario.ore, orario.minuti, 0, 0);
+
+            // fix: next day
+            if (deadline < now) {
+                deadline.setDate(deadline.getDate() + 1);
+            }
 
             let tempoDisponibile = (deadline - now) / 1000;
 
             let stato = tempoSecondi > tempoDisponibile
                 ? "❌ NON finisce in tempo"
-                : "✅ Finisce prima delle 21:00";
+                : "✅ Finisce prima dell'orario impostato";
 
             let oreDisp = Math.floor(tempoDisponibile / 3600);
             let minDisp = Math.floor((tempoDisponibile % 3600) / 60);
@@ -601,10 +614,30 @@
             }
         }
 
-        function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "login.html";
-}
+        function getOrarioFine() {
+            let input = document.getElementById("fineOrario").value;
+
+            if (!input) return null;
+
+            let [ore, minuti] = input.split(":").map(Number);
+
+            return {
+                ore,
+                minuti
+            };
+        }
+
+
+
+        document.getElementById("fineOrario").addEventListener("input", function () {
+            let v = this.value.replace(/\D/g, "");
+
+            if (v.length >= 3) {
+                this.value = v.slice(0, 2) + ":" + v.slice(2, 4);
+            } else {
+                this.value = v;
+            }
+        });    
     </script>
 
 </body>
