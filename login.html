@@ -3,6 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>Login</title>
     <style>
         body {
@@ -30,11 +31,9 @@
 
         button {
             width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background: #2563eb;
-            color: white;
-            border: none;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 10px;
         }
 
         .container {
@@ -45,10 +44,27 @@
         }
 
         body {
-            margin: 0;
-            padding: 16px;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #eyeIcon:hover {
+            color: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -59,15 +75,26 @@
         <h2>Login</h2>
 
         <input type="text" id="user" placeholder="Username">
-        <input type="password" id="pass" placeholder="Password">
+        <div style="position: relative;">
+            <input type="password" id="password" placeholder="Password">
+
+            <i id="eyeIcon" class="fa-solid fa-eye" onclick="togglePassword()" style="
+        position:absolute;
+        right:12px;
+        top:50%;
+        transform:translateY(-50%);
+        cursor:pointer;
+        color:#6b7280;
+    "></i>
+        </div>
 
         <button onclick="login()">Login</button>
 
         <p id="error" style="color:red;"></p>
     </div>
 
+
     <script>
-        // 🔐 hardcoded users (you can change)
         const users = {
             admin: "1234",
             user: "0000",
@@ -75,8 +102,8 @@
         };
 
         function login() {
-            let u = document.getElementById("user").value;
-            let p = document.getElementById("pass").value;
+            let u = document.getElementById("user").value.trim();
+            let p = document.getElementById("password").value;
 
             if (users[u] && users[u] === p) {
                 localStorage.setItem("loggedIn", "true");
@@ -84,9 +111,28 @@
 
                 window.location.href = "index.html";
             } else {
-                document.getElementById("error").innerText = "Wrong credentials";
+                document.getElementById("error").innerText = "Credenziali sbagliate";
             }
         }
+
+        function togglePassword() {
+            let input = document.getElementById("password");
+            let icon = document.getElementById("eyeIcon");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") login();
+        });
+
+        document.getElementById("error").style.marginTop = "10px";
     </script>
 
 </body>
