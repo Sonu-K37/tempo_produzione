@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
         body {
@@ -35,6 +36,20 @@
             color: white;
             border: none;
         }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
     </style>
 </head>
 
@@ -56,7 +71,7 @@
         const users = {
             admin: "1234",
             user: "0000",
-            salvatore:"salvatore"
+            salvatore: "salvatore"
         };
 
         function login() {
