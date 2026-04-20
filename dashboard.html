@@ -211,19 +211,6 @@
             });
         }
 
-        let alarmPlayed = false;
-
-        function checkAlarm() {
-            let lista = JSON.parse(localStorage.getItem("produzione")) || [];
-
-            let hasLate = lista.some(item => (item.stato || "").includes("❌"));
-
-            if (hasLate && !alarmPlayed) {
-                let audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-                audio.play();
-                alarmPlayed = true;
-            }
-        }
 
         function elimina(macchina) {
             let lista = JSON.parse(localStorage.getItem("produzione")) || [];
@@ -288,7 +275,6 @@
             loadDashboard();
         }, 2000);
 
-        // alarm
-        setInterval(checkAlarm, 5000);
+        
     </script>
 </body>
