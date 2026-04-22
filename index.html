@@ -408,6 +408,9 @@
 
         <button id="calcolaBtn" onclick="calcola()">CALCOLA</button>
         <button onclick="aggiungi()">AGGIUNGI</button>
+        <button onclick="resetForm()" style="background:#ef4444;color:white;">
+            RESET
+        </button>
 
     </div>
 
@@ -1005,6 +1008,35 @@
                 calcoloFatto = false;
             });
         });
+
+        function resetForm() {
+            // clear inputs
+            document.getElementById("macchina").value = "";
+            document.getElementById("serbatoio").value = "";
+            document.getElementById("tramoggia").value = "";
+            document.getElementById("linea").value = "";
+            document.getElementById("grammi").value = "";
+            document.getElementById("ciclo").value = "";
+            document.getElementById("materiale").value = "";
+            document.getElementById("densita").value = "";
+            document.getElementById("fineOrario").value = "21:00";
+
+            // clear results (if modal version)
+            let modal = document.getElementById("resultModal");
+            if (modal) {
+                modal.querySelector("#pezzi").innerText = "";
+                modal.querySelector("#tempo").innerText = "";
+                modal.querySelector("#tempoDisponibile").innerText = "";
+                modal.querySelector("#stato").innerText = "";
+                modal.querySelector("#stopTime").innerText = "";
+            }
+
+            // reset state
+            calcoloFatto = false;
+
+            // optional: hide material box
+            document.getElementById("materialBox").style.display = "none";
+        }
 
         function logout() {
             localStorage.removeItem("loggedIn");
