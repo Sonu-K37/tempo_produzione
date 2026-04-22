@@ -281,15 +281,15 @@
         }
 
         .section-title {
-    font-size: 13px;
-    font-weight: 800;
-    color: #1f2937;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    border-left: 4px solid #2563eb;
-    padding-left: 10px;
-    margin-bottom: 15px;
-}
+            font-size: 13px;
+            font-weight: 800;
+            color: #1f2937;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-left: 4px solid #2563eb;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 
@@ -681,7 +681,9 @@
 
             let inputTime = document.getElementById("fineOrario").value || "21:00";
 
-            let [h, m] = inputTime.split(":").map(Number);
+            let [h, m] = inputTime.includes(":")
+                ? inputTime.split(":").map(Number)
+                : [Number(inputTime), 0];
 
             let deadline = new Date();
             deadline.setHours(h, m, 0, 0);
