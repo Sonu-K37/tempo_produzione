@@ -23,13 +23,6 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 22px;
-            color: #111827;
-        }
-
         label {
             font-weight: 600;
             margin-top: 12px;
@@ -157,6 +150,146 @@
         .calcolabtn:active {
             transform: scale(0.96);
         }
+
+        #stopTime {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        #tempoDisponibile {
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        /* CARD */
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            max-width: 420px;
+            margin: 8% auto;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            animation: pop 0.2s ease;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* HEADER */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-header span {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* STOP BOX */
+        .stop-box {
+            text-align: center;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #fee2e2;
+        }
+
+        .stop-box p {
+            margin: 0;
+            font-size: 13px;
+            color: #991b1b;
+        }
+
+        .stop-box h1 {
+            margin: 5px 0 0;
+            font-size: 36px;
+            color: #dc2626;
+        }
+
+        /* STATUS */
+        .status-box {
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* GREEN */
+        .status-ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* RED */
+        .status-late {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* DETAILS */
+        .details {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .details p {
+            margin: 6px 0;
+        }
+
+        .modal-content {
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .stop-box h1 {
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        .details p {
+            font-size: 16px;
+        }
+
+        .section-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    border-left: 4px solid #2563eb;
+    padding-left: 10px;
+    margin-bottom: 15px;
+}
     </style>
 </head>
 
@@ -175,7 +308,7 @@
 
 
     <div class="container">
-        <h2>Tempo Produzione</h2>
+        <h3 class="section-title">IMPOSTAZIONE MACCHINA</h3>
 
         <label>Macchina</label>
         <select id="macchina" onchange="autoFillMacchina()">
@@ -222,7 +355,7 @@
 
 
     <div class="container">
-        <h2>Parametri di Calcolo</h2>
+        <h3 class="section-title">PARAMETRI DI PRODUZIONE</h3>
         <label>Grammi per pezzo</label>
         <input type="number" id="grammi" placeholder="es. 500">
 
@@ -232,6 +365,7 @@
 
     <div class="container">
 
+        <h3 class="section-title">MATERIALE E ORARIO FINE</h3>
         <label>Codice Materiale</label>
         <input type="text" id="materiale" oninput="liveSearchMateriale()" placeholder="Codice o densità">
 
@@ -277,24 +411,6 @@
 
     </div>
 
-
-    <div id="risultati" class="container">
-
-        <h3>Risultati Produzione</h3>
-        <div class="result">
-            <p>Stampate: <span id="pezzi"></span></p>
-            <p>Tempo Per Svuotare: <span id="tempo"></span></p>
-        </div>
-
-
-
-        <h3>Controllo Tempo</h3>
-        <div class="result">
-            <p>Tempo Disponibile: <span id="tempoDisponibile"></span></p>
-            <p>Stato: <span id="stato"></span></p>
-            <p>⛔ Stop Materiale Entro: <span id="stopTime"></span></p>
-        </div>
-    </div>
     <script>
         if (localStorage.getItem("loggedIn") !== "true") {
             window.location.href = "login.html";
@@ -590,30 +706,51 @@
             let minDisp = Math.floor((tempoDisponibile % 3600) / 60);
 
             // ⛔ STOP TIME
-            let stopTime = new Date(now.getTime() + tempoSecondi * 1000);
+            let stopTime = new Date(deadline.getTime() - tempoSecondi * 1000);
+
             let stopOre = String(stopTime.getHours()).padStart(2, '0');
             let stopMin = String(stopTime.getMinutes()).padStart(2, '0');
 
-            document.getElementById("risultati").style.border = "2px solid #22c55e";
+            if (tempoSecondi > tempoDisponibile) {
+                document.getElementById("stopTime").innerText = "--";
+            }
 
-            // 🎯 UPDATE UI
-            document.getElementById("pezzi").innerText = pezzi.toFixed(0);
-            document.getElementById("tempo").innerText = ore + "h " + minuti + "min";
-            document.getElementById("tempoDisponibile").innerText = oreDisp + "h " + minDisp + "min";
-            document.getElementById("stato").innerText = stato;
-            document.getElementById("stopTime").innerText = stopOre + ":" + stopMin;
+            // document.getElementById("risultati").style.border = "2px solid #22c55e";
 
-            // 🎨 COLOR STATUS
-            let statoEl = document.getElementById("stato");
+            // MODAL UI
+            let modal = document.getElementById("resultModal");
 
+            modal.querySelector("#pezzi").innerText = pezzi.toFixed(0);
+            modal.querySelector("#tempo").innerText = ore + "h " + minuti + "min";
+            modal.querySelector("#tempoDisponibile").innerText = oreDisp + "h " + minDisp + "min";
+            modal.querySelector("#stato").innerText = stato;
+            modal.querySelector("#stopTime").innerText = stopOre + ":" + stopMin;
+
+            let statoEl = modal.querySelector("#stato");
+            let statoBox = modal.querySelector("#statoBox");
+
+            // text already set above, now just styling
             statoEl.classList.remove("ok", "late");
 
             if (stato.includes("❌")) {
                 statoEl.classList.add("late");
+                statoBox.classList.remove("status-ok");
+                statoBox.classList.add("status-late");
             } else {
                 statoEl.classList.add("ok");
+                statoBox.classList.remove("status-late");
+                statoBox.classList.add("status-ok");
             }
-            calcoloFatto = true;
+
+            openModal();
+        }
+
+        function openModal() {
+            document.getElementById("resultModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("resultModal").style.display = "none";
         }
 
         // 💾 SAVE DATA (FIXED)
@@ -874,4 +1011,32 @@
 
     </script>
 
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <span onclick="closeModal()">✖</span>
+                <h2 style="text-align: center;">Risultati</h2>
+            </div>
+
+            <!-- STOP TIME (MAIN) -->
+            <div class="stop-box">
+                <p>⛔ STOP MATERIALE ENTRO</p>
+                <h1 id="stopTime"></h1>
+            </div>
+
+            <!-- STATUS -->
+            <div id="statoBox" class="status-box">
+                <span id="stato"></span>
+            </div>
+
+            <!-- DETAILS -->
+            <div class="details">
+                <p><strong>Stampate:</strong> <span id="pezzi"></span></p>
+                <p><strong>Tempo Per Svuotare:</strong> <span id="tempo"></span></p>
+                <p><strong>Tempo Disponibile:</strong> <span id="tempoDisponibile"></span></p>
+            </div>
+
+        </div>
+    </div>
 </body>
