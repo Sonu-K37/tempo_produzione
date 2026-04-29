@@ -296,9 +296,9 @@
 <body>
     <button class="top-btn" onclick="vaiDashboard()">📊 Dashboard</button>
 
-    <button onclick="logout()" style="background:rgb(0, 183, 255); color:white;">
+    <!-- <button onclick="logout()" style="background:rgb(0, 183, 255); color:white;">
         Logout
-    </button>
+    </button> -->
 
     <script>
         function vaiDashboard() {
@@ -415,9 +415,9 @@
     </div>
 
     <script>
-        if (localStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "login.html";
-        }
+
+        let lastCalcolo = null;
+        let calcoloFatto = false;
 
         const macchineData = {
             "MK 18": { linea: 500, tramoggia: 120 },
@@ -489,108 +489,6 @@
             "9435AB": { densita: 0.035, fornitore: "BASF", colore: "ROSSOO", note: "--" }
         };
 
-        /*const materiali = {
-            KANEKA: {
-                Nero: {
-                    "VB45": { densita: 0.018, note: "--" },
-                    "BV35": { densita: 0.022, note: "--" },
-                    "VB30": { densita: 0.025, note: "--" },
-                    "VB24": { densita: 0.032, note: "--" },
-                    "VB20": { densita: 0.038, note: "--" },
-                    "VX15": { densita: 0.050, note: "--" },
-                    "MB12": { densita: 0.066, note: "--" },
-                    "MB11": { densita: 0.074, note: "--" },
-                    "LB9": { densita: 0.082, note: "--" },
-                    "LB7": { densita: 0.104, note: "--" },
-                    "LB6": { densita: 0.135, note: "--" },
-                    "LB5": { densita: 0.158, note: "--" }
-                },
-
-                BLU: {
-                    "MN30": { densita: 0.025, note: "--" },
-                    "MN20": { densita: 0.038, note: "--" }
-                },
-
-                GRIGIO: {
-                    "MM20": { densita: 0.038, note: "--" }
-                },
-
-                GRIGIO: {
-                    "MO20": { densita: 0.038, note: "--" }
-                },
-
-                Bianco: {
-                    "M30": { densita: 0.025, note: "--" },
-                    "M24": { densita: 0.032, note: "--" },
-                    "M20": { densita: 0.038, note: "--" },
-                    "M15": { densita: 0.050, note: "--" },
-                    "V12": { densita: 0.066, note: "--" }
-                }
-            },
-
-            JSP: {
-                Nero: {
-                    "5118": { densita: 0.018, note: "--" },
-                    "5122": { densita: 0.022, note: "--" },
-                    "5126": { densita: 0.026, note: "--" },
-                    "5130": { densita: 0.030, note: "--" },
-                    "5135": { densita: 0.035, note: "--" },
-                    "5635 FINE": { densita: 0.035, note: "--" },
-                    "5142": { densita: 0.042, note: "--" },
-                    "5150": { densita: 0.050, note: "--" },
-                    "5160": { densita: 0.060, note: "--" },
-                    "5170": { densita: 0.070, note: "--" },
-                    "5180": { densita: 0.080, note: "--" },
-                    "5195": { densita: 0.095, note: "--" },
-                    "5912": { densita: 0.120, note: "--" },
-                    "5915": { densita: 0.150, note: "--" },
-                    "5920": { densita: 0.200, note: "--" }
-                },
-
-                BIANCO: {
-                    "3122": { densita: 0.022, note: "--" },
-                    "3133": { densita: 0.033, note: "--" },
-                    "3150": { densita: 0.050, note: "--" },
-                    "3170": { densita: 0.070, note: "--" }
-                },
-
-                GRIGIO: {
-                    "4133": { densita: 0.033, note: "--" }
-                },
-
-                BLU: {
-                    "1133": { densita: 0.033, note: "--" }
-                },
-
-                VERDE: {
-                    "1133": { densita: 0.033, note: "--" }
-                },
-
-                ARANCIO: {
-                    "1133": { densita: 0.033, note: "--" }
-                },
-
-                LIME: {
-                    "1133": { densita: 0.033, note: "--" }
-                },
-            },
-
-            BASF: {
-
-                GRIGIO: {
-                    "9335MG": { densita: 0.035, note: "--" }
-                },
-
-                BLU: {
-                    "9335AB": { densita: 0.035, note: "--" }
-                },
-
-                ROSSO: {
-                    "9335SR": { densita: 0.035, note: "--" }
-                }
-            }
-        };*/
-
         let btn = document.getElementById("calcolaBtn");
 
         // visual press effect
@@ -605,6 +503,7 @@
             btn.innerText = "CALCOLA";
             btn.disabled = false;
         }, 300);
+
 
         function autoFillMacchina() {
             let macchina = document.getElementById("macchina").value;
@@ -650,103 +549,85 @@
             let grammi = parseFloat(document.getElementById("grammi").value);
             let ciclo = parseFloat(document.getElementById("ciclo").value);
 
-            // optional: notify dashboard system
-            localStorage.setItem("lastUpdate", Date.now());
+            if (!macchina) return alert("Seleziona macchina!");
+            if (!densita || !grammi || !ciclo) return alert("Inserisci tutti i valori!");
 
-            // ✅ VALIDATION
-            if (!macchina) {
-                alert("Seleziona macchina!");
-                return;
-            }
-
-            if (!densita || !grammi || !ciclo) {
-                alert("Inserisci tutti i valori!");
-                return;
-            }
-
-            // Litri → Kg
-            let kgLinea = lineaL * densita;
-            let kgTramoggia = tramoggiaL * densita;
-            let totale = kgLinea + kgTramoggia;
-
-            // Grammi → Kg
+            // calculation
+            let totale = (lineaL + tramoggiaL) * densita;
             let kgPerPezzo = grammi / 1000;
-
-            // Pezzi
             let pezzi = totale / kgPerPezzo;
 
-            // Tempo produzione
             let tempoSecondi = pezzi * ciclo;
             let ore = Math.floor(tempoSecondi / 3600);
             let minuti = Math.floor((tempoSecondi % 3600) / 60);
 
             let now = new Date();
 
+            // SAFE TIME PARSING
             let inputTime = document.getElementById("fineOrario").value || "21:00";
-
             let [h, m] = inputTime.includes(":")
                 ? inputTime.split(":").map(Number)
-                : [Number(inputTime), 0];
+                : [parseInt(inputTime) || 21, 0];
 
             let deadline = new Date();
             deadline.setHours(h, m, 0, 0);
 
-            // ❌ NO next-day logic
+            let tempoDisponibile = Math.max(0, Math.floor((deadline - now) / 1000));
 
-            let tempoDisponibile = Math.floor((deadline - now) / 1000);
-
-            let stato = "";
-
-            // ⛔ if deadline already passed
-            if (tempoDisponibile <= 0) {
-                stato = "❌ Orario già passato";
-                tempoDisponibile = 0;
-            } else if (tempoSecondi > tempoDisponibile) {
-                stato = "❌ NON finisce in tempo";
-            } else {
-                stato = "✅ Finisce prima dell'orario impostato";
-            }
+            let stato =
+                tempoDisponibile <= 0
+                    ? "❌ Orario già passato"
+                    : tempoSecondi > tempoDisponibile
+                        ? "❌ NON finisce in tempo"
+                        : "✅ Finisce prima dell'orario impostato";
 
             let oreDisp = Math.floor(tempoDisponibile / 3600);
             let minDisp = Math.floor((tempoDisponibile % 3600) / 60);
 
-            // ⛔ STOP TIME
+            // STOP TIME (FIXED LOGIC)
             let stopTime = new Date(deadline.getTime() - tempoSecondi * 1000);
+            let stopOre = String(stopTime.getHours()).padStart(2, "0");
+            let stopMin = String(stopTime.getMinutes()).padStart(2, "0");
 
-            let stopOre = String(stopTime.getHours()).padStart(2, '0');
-            let stopMin = String(stopTime.getMinutes()).padStart(2, '0');
-
-            if (tempoSecondi > tempoDisponibile) {
-                document.getElementById("stopTime").innerText = "--";
-            }
-
-            // document.getElementById("risultati").style.border = "2px solid #22c55e";
-
-            // MODAL UI
+            // MODAL
             let modal = document.getElementById("resultModal");
 
             modal.querySelector("#pezzi").innerText = pezzi.toFixed(0);
-            modal.querySelector("#tempo").innerText = ore + "h " + minuti + "min";
-            modal.querySelector("#tempoDisponibile").innerText = oreDisp + "h " + minDisp + "min";
+            modal.querySelector("#tempo").innerText = `${ore}h ${minuti}min`;
+            modal.querySelector("#tempoDisponibile").innerText = `${oreDisp}h ${minDisp}min`;
             modal.querySelector("#stato").innerText = stato;
-            modal.querySelector("#stopTime").innerText = stopOre + ":" + stopMin;
+            modal.querySelector("#stopTime").innerText =
+                tempoSecondi > tempoDisponibile ? "--" : `${stopOre}:${stopMin}`;
 
             let statoEl = modal.querySelector("#stato");
             let statoBox = modal.querySelector("#statoBox");
 
-            // text already set above, now just styling
-            statoEl.classList.remove("ok", "late");
+            statoEl.className = "";
+            statoBox.className = "status-box";
 
             if (stato.includes("❌")) {
                 statoEl.classList.add("late");
-                statoBox.classList.remove("status-ok");
                 statoBox.classList.add("status-late");
             } else {
                 statoEl.classList.add("ok");
-                statoBox.classList.remove("status-late");
                 statoBox.classList.add("status-ok");
             }
 
+            lastCalcolo = {
+                pezzi: pezzi.toFixed(0),
+                ore,
+                minuti,
+                tempoSecondi,
+                oreDisp,
+                minDisp,
+                stato,
+                stopTime:
+                    tempoSecondi > tempoDisponibile
+                        ? "--"
+                        : `${stopOre}:${stopMin}`
+            };
+
+            calcoloFatto = true;
             openModal();
         }
 
@@ -758,70 +639,41 @@
             document.getElementById("resultModal").style.display = "none";
         }
 
+
         // 💾 SAVE DATA (FIXED)
         function aggiungi() {
-            if (!calcoloFatto) {
+            console.log("LAST CALCOLO:", lastCalcolo);
+
+            if (!lastCalcolo) {
                 alert("Devi prima fare CALCOLA!");
                 return;
             }
 
-            let macchina = document.getElementById("macchina").value;
-            let serbatoio = document.getElementById("serbatoio").value;
-
-            let lineaL = parseFloat(document.getElementById("linea").value) || 0;
-            let tramoggiaL = parseFloat(document.getElementById("tramoggia").value) || 0;
-            let densita = parseFloat(document.getElementById("densita").value);
-            let grammi = parseFloat(document.getElementById("grammi").value);
-            let ciclo = parseFloat(document.getElementById("ciclo").value);
-
-            if (!macchina || !densita || !grammi || !ciclo) {
-                alert("Prima fai CALCOLA!");
-                return;
-            }
-
-            let kgLinea = lineaL * densita;
-            let kgTramoggia = tramoggiaL * densita;
-            let totale = kgLinea + kgTramoggia;
-
-            let kgPerPezzo = grammi / 1000;
-            let pezzi = totale / kgPerPezzo;
-
-            let tempoSecondi = pezzi * ciclo;
-            let ore = Math.floor(tempoSecondi / 3600);
-            let minuti = Math.floor((tempoSecondi % 3600) / 60);
-
-            let inputTime = document.getElementById("fineOrario").value || "21:00";
-            let [h, m] = inputTime.split(":").map(Number);
-
-            let deadline = new Date();
-            deadline.setHours(h, m, 0, 0);
-
-            let stopTime = new Date(Date.now() + tempoSecondi * 1000);
-            let stopOre = String(stopTime.getHours()).padStart(2, '0');
-            let stopMin = String(stopTime.getMinutes()).padStart(2, '0');
-
-            let key = `${macchina}_${serbatoio}_${grammi}_${ciclo}_${densita}`;
+            let macchina = document.getElementById("macchina").value.trim().toUpperCase();
+            let serbatoio = document.getElementById("serbatoio").value.trim().toUpperCase() || "-";
 
             let lista = JSON.parse(localStorage.getItem("produzione")) || [];
 
-            let exists = lista.some(item => item.key === key);
+            // ✅ duplicate check
+            let exists = lista.some(item =>
+                item.macchina === macchina &&
+                (item.serbatoio || "-") === serbatoio
+            );
 
             if (exists) {
-                alert("❌ Questa produzione esiste già!");
+                alert("❌ Questa macchina è già presente!");
                 return;
             }
 
+            // ✅ CREATE dato PROPERLY
             let dato = {
                 id: crypto.randomUUID(),
-                key,
                 macchina,
-                serbatoio: serbatoio || "-",
-                pezzi: pezzi.toFixed(0),
-                tempo: ore + "h " + minuti + "min",
-                stop: `${stopOre}:${stopMin}`,
-                stato: tempoSecondi > ((deadline - new Date()) / 1000)
-                    ? "❌ NON finisce in tempo"
-                    : "✅ Finisce prima"
+                serbatoio,
+                pezzi: lastCalcolo.pezzi,
+                tempo: `${lastCalcolo.ore}h ${lastCalcolo.minuti}min`,
+                stop: lastCalcolo.stopTime,
+                stato: lastCalcolo.stato
             };
 
             lista.push(dato);
@@ -1009,6 +861,10 @@
             });
         });
 
+        function resetCalcolo() {
+            calcoloFatto = false;
+        }
+
         function resetForm() {
             // clear inputs
             document.getElementById("macchina").value = "";
@@ -1038,10 +894,7 @@
             document.getElementById("materialBox").style.display = "none";
         }
 
-        function logout() {
-            localStorage.removeItem("loggedIn");
-            window.location.href = "login.html";
-        }
+       
 
     </script>
 
