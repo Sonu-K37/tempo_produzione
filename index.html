@@ -439,6 +439,8 @@
 
 
         const materialiFlat = {
+
+            // KANEKA NERO
             "VB45": { densita: 0.018, fornitore: "KANEKA", colore: "NERO", note: "--" },
             "VB35": { densita: 0.022, fornitore: "KANEKA", colore: "NERO", note: "--" },
             "VB30": { densita: 0.025, fornitore: "KANEKA", colore: "NERO", note: "--" },
@@ -451,39 +453,89 @@
             "LB7": { densita: 0.104, fornitore: "KANEKA", colore: "NERO", note: "--" },
             "LB6": { densita: 0.135, fornitore: "KANEKA", colore: "NERO", note: "--" },
             "LB5": { densita: 0.158, fornitore: "KANEKA", colore: "NERO", note: "--" },
+
+            // KANEKA BLU
             "MN30": { densita: 0.025, fornitore: "KANEKA", colore: "BLU", note: "--" },
             "MN20": { densita: 0.038, fornitore: "KANEKA", colore: "BLU", note: "--" },
+
+            // KANEKA GRIGIO
             "MM20": { densita: 0.038, fornitore: "KANEKA", colore: "GRIGIO", note: "--" },
+
+            // KANEKA TERRA COTTA
             "MO20": { densita: 0.038, fornitore: "KANEKA", colore: "TERRA COTTA", note: "--" },
+
+            // KANEKA BIANCO
             "M30": { densita: 0.025, fornitore: "KANEKA", colore: "BIANCO", note: "--" },
             "M24": { densita: 0.032, fornitore: "KANEKA", colore: "BIANCO", note: "--" },
-            "M20": { densita: 0.038, fornitore: "KANEKA", colore: "Bianco", note: "--" },
-            "M15": { densita: 0.050, fornitore: "KANEKA", colore: "Bianco", note: "--" },
+            "M20": { densita: 0.038, fornitore: "KANEKA", colore: "BIANCO", note: "--" },
+            "M15": { densita: 0.050, fornitore: "KANEKA", colore: "BIANCO", note: "--" },
             "V12": { densita: 0.066, fornitore: "KANEKA", colore: "BIANCO", note: "--" },
+
+
+            // JSP NERO <100g/l
+            "5116": { densita: 0.016, fornitore: "JSP", colore: "NERO", note: "--" },
             "5118": { densita: 0.018, fornitore: "JSP", colore: "NERO", note: "--" },
             "5122": { densita: 0.022, fornitore: "JSP", colore: "NERO", note: "--" },
             "5126": { densita: 0.026, fornitore: "JSP", colore: "Nero", note: "--" },
             "5130": { densita: 0.030, fornitore: "JSP", colore: "NERO", note: "--" },
             "5135": { densita: 0.035, fornitore: "JSP", colore: "NERO", note: "--" },
-            "5635 FINE": { densita: 0.035, fornitore: "JSP", colore: "NERO", note: "--" },
             "5142": { densita: 0.042, fornitore: "JSP", colore: "NERO", note: "--" },
             "5150": { densita: 0.050, fornitore: "JSP", colore: "NERO", note: "--" },
+            "5155": { densita: 0.055, fornitore: "JSP", colore: "NERO", note: "--" },
             "5160": { densita: 0.060, fornitore: "JSP", colore: "NERO", note: "--" },
             "5170": { densita: 0.070, fornitore: "JSP", colore: "NERO", note: "--" },
             "5180": { densita: 0.080, fornitore: "JSP", colore: "NERO", note: "--" },
             "5195": { densita: 0.095, fornitore: "JSP", colore: "NERO", note: "--" },
+
+            // JSP NERO >100g/l
             "5912": { densita: 0.120, fornitore: "JSP", colore: "NERO", note: "--" },
             "5915": { densita: 0.150, fornitore: "JSP", colore: "NERO", note: "--" },
             "5920": { densita: 0.200, fornitore: "JSP", colore: "NERO", note: "--" },
+
+            // JSP GRIGIO
+            "4133": { densita: 0.033, fornitore: "JSP", colore: "GRIGIO", note: "--" },
+
+            // JSP BIANCO
+            "3115": { densita: 0.015, fornitore: "JSP", colore: "BIANCO", note: "--" },
             "3122": { densita: 0.022, fornitore: "JSP", colore: "BIANCO", note: "--" },
             "3133": { densita: 0.033, fornitore: "JSP", colore: "BIANCO", note: "--" },
             "3150": { densita: 0.050, fornitore: "JSP", colore: "BIANCO", note: "--" },
-            "3170": { densita: 0.070, fornitore: "JSP", colore: "BIANCO", note: "--" },
-            "4133": { densita: 0.033, fornitore: "JSP", colore: "GRIGIO", note: "--" },
-            "1133": { densita: 0.033, fornitore: "JSP", colore: "BLU", note: "--" },
-            "1133": { densita: 0.033, fornitore: "JSP", colore: "VERDE", note: "--" },
-            "1133": { densita: 0.033, fornitore: "JSP", colore: "ARANCIO", note: "--" },
+            "3180": { densita: 0.080, fornitore: "JSP", colore: "BIANCO", note: "--" },
+
+            // JSP RECYCLED
+            "5121 RE": { densita: 0.021, fornitore: "JSP", colore: "--", note: "RECYCLED" },
+            "5134 RE": { densita: 0.034, fornitore: "JSP", colore: "--", note: "RECYCLED" },
+            "5253 RE": { densita: 0.053, fornitore: "JSP", colore: "--", note: "RECYCLED and expandable up to 16g/l" },
+            "35 OCEAN": { densita: 0.035, fornitore: "JSP", colore: "--", note: "RECYCLED from maritime industry waste" },
+
+            // JSP Per applicazioni specifiche
+            "4135 FR": { densita: 0.035, fornitore: "JSP", colore: "--", note: "Flame Retardant" },
+            "5121 ESDP": { densita: 0.021, fornitore: "JSP", colore: "--", note: "Electrostatic discharge protection" },
+            "5135 ESDP": { densita: 0.035, fornitore: "JSP", colore: "--", note: "Electrostatic discharge protection" },
+            "5135 LSS": { densita: 0.033, fornitore: "JSP", colore: "--", note: "Low stick / slip" },
+            "5152 ESDP": { densita: 0.053, fornitore: "JSP", colore: "--", note: "Electrostatic discharge protection" },
+            "5635 CG": { densita: 0.035, fornitore: "JSP", colore: "--", note: "Complex geometry" },
+
+            // JSP Espanzione in loco
+            "5253": { densita: 0.053, fornitore: "JSP", colore: "--", note: "Espandibile fino a 16g/l" },
+            "5275": { densita: 0.075, fornitore: "JSP", colore: "--", note: "Espandibile fino a 16g/l" },
+
+            // JSP Poroso
+            "4025": { densita: 0.025, fornitore: "JSP", colore: "GRIGIO", note: "--" },
+            "4036": { densita: 0.036, fornitore: "JSP", colore: "GRIGIO", note: "--" },
+
+            // JSP COLORI 
+            "1133": { densita: 0.033, fornitore: "JSP", colore: "BLUEBERRY", note: "--" },
+            "1133": { densita: 0.033, fornitore: "JSP", colore: "DRAGON FRUIT", note: "--" },
+            "1133": { densita: 0.033, fornitore: "JSP", colore: "ORANGE", note: "--" },
+            "1133": { densita: 0.033, fornitore: "JSP", colore: "LEMON", note: "--" },
             "1133": { densita: 0.033, fornitore: "JSP", colore: "LIME", note: "--" },
+
+            // JSP ALTRO
+            "5635 FINE": { densita: 0.035, fornitore: "JSP", colore: "NERO", note: "--" },
+
+
+            // BASF
             "9435MG": { densita: 0.035, fornitore: "BASF", colore: "GRIGIO", note: "--" },
             "9435AB": { densita: 0.035, fornitore: "BASF", colore: "BLU", note: "--" },
             "9435AB": { densita: 0.035, fornitore: "BASF", colore: "ROSSOO", note: "--" }
@@ -650,7 +702,7 @@
             }
 
             let macchina = document.getElementById("macchina").value.trim().toUpperCase();
-            let serbatoio = document.getElementById("serbatoio").value.trim().toUpperCase() || "-";
+            let serbatoio = (document.getElementById("serbatoio").value || "-").trim().toUpperCase();
 
             let lista = JSON.parse(localStorage.getItem("produzione")) || [];
 
@@ -668,10 +720,10 @@
             // ✅ CREATE dato PROPERLY
             let dato = {
                 id: crypto.randomUUID(),
-                macchina,
-                serbatoio,
+                macchina: macchina,
+                serbatoio: serbatoio,
                 pezzi: lastCalcolo.pezzi,
-                tempo: `${lastCalcolo.ore}h ${lastCalcolo.minuti}min`,
+                tempo: lastCalcolo.ore + "h " + lastCalcolo.minuti + "min",
                 stop: lastCalcolo.stopTime,
                 stato: lastCalcolo.stato
             };
@@ -894,7 +946,7 @@
             document.getElementById("materialBox").style.display = "none";
         }
 
-       
+
 
     </script>
 
